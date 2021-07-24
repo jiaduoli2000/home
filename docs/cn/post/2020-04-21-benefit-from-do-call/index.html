@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+    
+    <link rel="stylesheet" href="../../../fonts/academicons-1.8.6/css/academicons.min.css"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="../../../logo/bodhi.png"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    
+    
+    <title>do.call 妙用——参数更新 - 王诗翔</title>
+    
+     
+    <meta property="og:title" content="do.call 妙用——参数更新 - Shixiang Wang | 王诗翔">
+    
+
+    
+      
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/Xcode.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="../../../css/style.css" />
+    <link rel="stylesheet" href="../../../css/mystyle.css" /> 
+    <link rel="stylesheet" href="../../../css/fonts.css" />
+    
+<script async src="../../../js/load-typekit.js"></script>
+
+
+<link rel="stylesheet" href="../../../css/custom.css" />
+
+  </head>
+  
+  <body class="cn">
+    <header class="masthead">
+      
+
+<h1><a href="../../../logo/ShixiangWang.png"><img src="../../../logo/ShixiangWang.png" alt="Shixiang Wang" /></a></h1>
+<p align="right" style="margin-top:-50px;"><small>><i>上士闻道<br>勤而行之</i></small></p>
+
+
+
+
+      <nav class="menu">
+        <input id="menu-check" type="checkbox" />
+        <label id="menu-label" for="menu-check" class="unselectable">
+          <span class="icon close-icon">✕</span>
+          <span class="icon open-icon">☰</span>
+          <span class="text">Menu</span>
+        </label>
+        <ul>
+        
+        
+        <li><a href="../../../">首页</a></li>
+        
+        <li><a href="../../../cn/about/">关于</a></li>
+        
+        <li><a href="../../../cn/post/">博客</a></li>
+        
+        <li><a href="../../../cn/read/">读书</a></li>
+        
+        <li><a href="../../../cn/writing">写作</a></li>
+        
+        <li><a href="../../../cn/research/">研究</a></li>
+        
+        <li><a href="../../../cn/tools/">工具</a></li>
+        
+        <li><a href="../../../cn/cv-cn/shixiang">简历</a></li>
+        
+        <li><a href="../../../logo/qrcode.jpg">公众号</a></li>
+        
+        <li><a href="https://www.zhihu.com/people/shixiangwang">知乎</a></li>
+        
+        <li><a href="../../../cn/mark">推荐阅读</a></li>
+        
+        <li><a href="../../../en/">English</a></li>
+        
+        <li><a href="../../../categories/">分类</a></li>
+        
+        <li><a href="../../../tags/">标签</a></li>
+        
+        
+
+<li class="menu-extra"></li>
+
+
+
+
+
+
+<li><a href="https://github.com/ShixiangWang/home/edit/master/content/cn/post/2020-04-21-benefit-from-do-call.Rmd" target="_blank">编辑</a></li>
+
+
+<li><a href="../../../cn/index.xml" type="application/rss+xml" title="RSS feed">订阅</a></li>
+
+<li><a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="Attribution-NonCommercial-ShareAlike 4.0 International">版权</a></li>
+
+
+        </ul>
+      </nav>
+    </header>
+
+    <article class="main">
+      <header class="title">
+        
+
+<h1>do.call 妙用——参数更新</h1>
+
+
+
+<h3>王诗翔 &middot 
+2020-04-21</h3> 
+
+
+<p style="text-align:right;">
+  分类:
+  
+    <a href="../../../categories/r">r</a> &nbsp
+  
+  <br>
+  标签:
+  
+    <a href="../../../tags/r">r</a> &nbsp
+  
+    <a href="../../../tags/do.call">do.call</a> &nbsp
+  
+</p>
+
+
+
+   
+  
+
+
+      </header>
+
+
+
+
+
+<p>R 中的 <code>do.call()</code> 是我极少用到的一个函数，不过它在很多情况下是蛮有用的，之前我也做过简单的介绍。</p>
+<p>它可以在实际调用函数时将参数以列表的形式传入，下面是一个简单的函数：</p>
+<pre class="r"><code>f &lt;- function(x) print(x^2)</code></pre>
+<p>我们可以用下面的方式调用 <code>do.call()</code>：</p>
+<pre class="r"><code>do.call(f, list(x = 4))
+#&gt; [1] 16</code></pre>
+<p>大部分情况下这样的用法是啰嗦的，直接 <code>f(4)</code> 其实已经解决上面的问题了。</p>
+<p>最近我需要批量更新参数时发现了 <code>do.call()</code> 的好用之处。</p>
+<p>在批量建模时可能需要比较对建模函数设定不同的参数，我们以求和函数作为建模函数举例。</p>
+<p>假设建模需要 4 个参数，造一个类似的求和函数：</p>
+<pre class="r"><code>Sum &lt;- function(a = 1, b = 2, c = 3, d = 4) {
+  return(sum(a, b, c, d))
+}</code></pre>
+<p>而我们需要批量运行这个函数，而且只修改其中 3 个参数，另外参数是外部定义的，比如说其他使用这个函数的人。</p>
+<p>有可能只使用 a, b, c：</p>
+<pre class="r"><code>Sum(a = 1, b = 3, c = 5)
+#&gt; [1] 13</code></pre>
+<p>也可能使用 b, c, d。</p>
+<pre class="r"><code>Sum(d = 1, b = 3, c = 5)
+#&gt; [1] 10</code></pre>
+<p>这并不能直接通过 <code>for</code> 循环、<code>apply</code> 之类的操作进行批量调用。我们来看看 <code>do.call()</code> 如何解决这个问题。</p>
+<p>我们构建一个参数矩阵：</p>
+<pre class="r"><code>Args &lt;- expand.grid(
+  c(1, 2),
+  c(3, 4, 5),
+  c(6, 7, 8, 9)
+)
+
+Args
+#&gt;    Var1 Var2 Var3
+#&gt; 1     1    3    6
+#&gt; 2     2    3    6
+#&gt; 3     1    4    6
+#&gt; 4     2    4    6
+#&gt; 5     1    5    6
+#&gt; 6     2    5    6
+#&gt; 7     1    3    7
+#&gt; 8     2    3    7
+#&gt; 9     1    4    7
+#&gt; 10    2    4    7
+#&gt; 11    1    5    7
+#&gt; 12    2    5    7
+#&gt; 13    1    3    8
+#&gt; 14    2    3    8
+#&gt; 15    1    4    8
+#&gt; 16    2    4    8
+#&gt; 17    1    5    8
+#&gt; 18    2    5    8
+#&gt; 19    1    3    9
+#&gt; 20    2    3    9
+#&gt; 21    1    4    9
+#&gt; 22    2    4    9
+#&gt; 23    1    5    9
+#&gt; 24    2    5    9</code></pre>
+<p>假设现在是使用 a, b, c 3 个参数：</p>
+<pre class="r"><code>colnames(Args) &lt;- c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+head(Args)
+#&gt;   a b c
+#&gt; 1 1 3 6
+#&gt; 2 2 3 6
+#&gt; 3 1 4 6
+#&gt; 4 2 4 6
+#&gt; 5 1 5 6
+#&gt; 6 2 5 6</code></pre>
+<p>创建批处理函数：</p>
+<pre class="r"><code>batchSum &lt;- function(ArgsMat) {
+  args &lt;- list()
+  for (i in 1:nrow(ArgsMat)) {
+    args_update &lt;- c(args, ArgsMat[i, , drop = FALSE])
+    do.call(Sum, args = args_update)
+  }
+}</code></pre>
+<p>为了查看调用效果，我们修改下 <code>Sum()</code> 函数：</p>
+<pre class="r"><code>Sum &lt;- function(a = 1, b = 2, c = 3, d = 4) {
+  message(&quot;a:&quot;, a, &quot; b:&quot;, b, &quot; c:&quot;, c, &quot; d:&quot;, d)
+  return(sum(a, b, c, d))
+}</code></pre>
+<p>调用参数矩阵试试：</p>
+<pre class="r"><code>batchSum(Args)
+#&gt; a:1 b:3 c:6 d:4
+#&gt; a:2 b:3 c:6 d:4
+#&gt; a:1 b:4 c:6 d:4
+#&gt; a:2 b:4 c:6 d:4
+#&gt; a:1 b:5 c:6 d:4
+#&gt; a:2 b:5 c:6 d:4
+#&gt; a:1 b:3 c:7 d:4
+#&gt; a:2 b:3 c:7 d:4
+#&gt; a:1 b:4 c:7 d:4
+#&gt; a:2 b:4 c:7 d:4
+#&gt; a:1 b:5 c:7 d:4
+#&gt; a:2 b:5 c:7 d:4
+#&gt; a:1 b:3 c:8 d:4
+#&gt; a:2 b:3 c:8 d:4
+#&gt; a:1 b:4 c:8 d:4
+#&gt; a:2 b:4 c:8 d:4
+#&gt; a:1 b:5 c:8 d:4
+#&gt; a:2 b:5 c:8 d:4
+#&gt; a:1 b:3 c:9 d:4
+#&gt; a:2 b:3 c:9 d:4
+#&gt; a:1 b:4 c:9 d:4
+#&gt; a:2 b:4 c:9 d:4
+#&gt; a:1 b:5 c:9 d:4
+#&gt; a:2 b:5 c:9 d:4</code></pre>
+<p>可以看出来整个过程中 <code>d</code> 是没有变的。我们再修改参数矩阵：</p>
+<pre class="r"><code>colnames(Args) &lt;- c(&quot;a&quot;, &quot;c&quot;, &quot;d&quot;)</code></pre>
+<p>再次调用函数：</p>
+<pre class="r"><code>batchSum(Args)
+#&gt; a:1 b:2 c:3 d:6
+#&gt; a:2 b:2 c:3 d:6
+#&gt; a:1 b:2 c:4 d:6
+#&gt; a:2 b:2 c:4 d:6
+#&gt; a:1 b:2 c:5 d:6
+#&gt; a:2 b:2 c:5 d:6
+#&gt; a:1 b:2 c:3 d:7
+#&gt; a:2 b:2 c:3 d:7
+#&gt; a:1 b:2 c:4 d:7
+#&gt; a:2 b:2 c:4 d:7
+#&gt; a:1 b:2 c:5 d:7
+#&gt; a:2 b:2 c:5 d:7
+#&gt; a:1 b:2 c:3 d:8
+#&gt; a:2 b:2 c:3 d:8
+#&gt; a:1 b:2 c:4 d:8
+#&gt; a:2 b:2 c:4 d:8
+#&gt; a:1 b:2 c:5 d:8
+#&gt; a:2 b:2 c:5 d:8
+#&gt; a:1 b:2 c:3 d:9
+#&gt; a:2 b:2 c:3 d:9
+#&gt; a:1 b:2 c:4 d:9
+#&gt; a:2 b:2 c:4 d:9
+#&gt; a:1 b:2 c:5 d:9
+#&gt; a:2 b:2 c:5 d:9</code></pre>
+<p>此时 <code>b</code> 是没有变的。</p>
+<p>以上我们通过 <code>do.call()</code> 实现了内部函数对外部输入的自动匹配。</p>
+<p>该操作我把它实际用在了批量 Keras 模型的调用上：<a href="https://github.com/ShixiangWang/sigminer.prediction/blob/f64bcdf7bc8d5d819d48edc4344ed9af8b984738/R/batch_modeling_and_fitting.R#L37-L63" class="uri">https://github.com/ShixiangWang/sigminer.prediction/blob/f64bcdf7bc8d5d819d48edc4344ed9af8b984738/R/batch_modeling_and_fitting.R#L37-L63</a>，有兴趣的读者可以看一下。</p>
+
+
+  <footer>
+  
+<nav class="post-nav">
+  <span class="nav-prev">&larr; <a href="../../../cn/post/golang-text-heart/">使用 Golang 绘制爱心文本</a></span>
+  <span class="nav-next"><a href="../../../cn/post/2020-04-24-can-delete-data-in-model/">模型结果为什么那么占存储空间？可以缩小吗？</a> &rarr;</span>
+</nav>
+<script type="text/javascript">
+document.addEventListener('keyup', function(e) {
+  if (e.target.nodeName.toUpperCase() != 'BODY') return;
+  var url = false;
+  if (e.which == 37) {  
+    
+    url = '\/cn\/post\/golang-text-heart\/';
+    
+  } else if (e.which == 39) {  
+    
+    url = '\/cn\/post\/2020-04-24-can-delete-data-in-model\/';
+    
+  }
+  if (url) window.location = url;
+});
+</script>
+
+
+
+
+
+<div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js"></script>
+<script>
+  const gitalk = new Gitalk({
+    clientID: 'eed477936be7b88a8455',
+    clientSecret: '32b5dde22f3c95c4fad400a31632e34221b07e83',
+    repo: 'home',
+    owner: 'ShixiangWang',
+    admin: ['ShixiangWang'],
+    id: md5(window.location.pathname), 
+    distractionFreeMode: false 
+  });
+  (function() {
+    if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+      document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+      return;
+    }
+    gitalk.render('gitalk-container');
+  })();
+</script>
+
+
+
+
+
+<script async src="../../../js/fix-toc.js"></script>
+
+<script async src="../../../js/center-img.js"></script>
+
+<script async src="../../../js/right-quote.js"></script>
+
+<script async src="../../../js/no-highlight.js"></script>
+
+<script async src="../../../js/fix-footnote.js"></script>
+
+<script async src="../../../js/math-code.js"></script>
+
+<script async src="../../../js/external-link.js"></script>
+
+<script async src="../../../js/alt-title.js"></script>
+
+<script async src="../../../js/header-link.js"></script>
+
+
+<script src="//yihui.org/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script async src="//yihui.org/js/center-img.js"></script>
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+  
+  
+
+  <div class="copyright"><a href="mailto:w_shixiang@163.com"><i class='far fa-envelope fa-1x'></i></a> · <a href="https://github.com/ShixiangWang"><i class='fab fa-github fa-1x'></i></a> · <a href="https://stackoverflow.com/users/7662327/shixiang-wang"><i class='fab fa-stack-overflow fa-1x'></i></a> · <a href="https://scholar.google.com/citations?user=FvNp0NkAAAAJ&amp;hl=zh-CN"><i class='ai ai-google-scholar ai-1x'></i></a> · <a href="https://orcid.org/0000-0001-9855-7357"><i class='ai ai-orcid ai-1x'></i></a> · <a href="https://www.researchgate.net/profile/Wang_Shixiang4"><i class='ai ai-researchgate ai-1x'></i></a> <br> 本站由 <a href="https://gohugo.io">Hugo</a> 和 <a href="https://bookdown.org/yihui/blogdown/">Blogdown</a> 强力驱动 © <a href="../../../">王诗翔</a> 2017 - 2020 </div>
+  
+  
+
+  <script type="text/javascript" src="//rf.revolvermaps.com/0/0/6.js?i=56h9es09xn7&amp;m=6&amp;c=ff0000&amp;cr1=ffffff&amp;f=arial&amp;l=1" async="async"></script>
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+    
+    <link rel="stylesheet" href="../../../fonts/academicons-1.8.6/css/academicons.min.css"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="../../../logo/bodhi.png"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    
+    
+    <title>浏览器 R 搜索插件 - 王诗翔</title>
+    
+     
+    <meta property="og:title" content="浏览器 R 搜索插件 - Shixiang Wang | 王诗翔">
+    
+
+    
+      
+    
+
+    
+
+    
+    
+
+    <link rel="stylesheet" href="../../../css/style.css" />
+    <link rel="stylesheet" href="../../../css/mystyle.css" /> 
+    <link rel="stylesheet" href="../../../css/fonts.css" />
+    
+<script async src="../../../js/load-typekit.js"></script>
+
+
+<link rel="stylesheet" href="../../../css/custom.css" />
+
+  </head>
+  
+  <body class="cn">
+    <header class="masthead">
+      
+
+<h1><a href="../../../logo/ShixiangWang.png"><img src="../../../logo/ShixiangWang.png" alt="Shixiang Wang" /></a></h1>
+<p align="right" style="margin-top:-50px;"><small>><i>上士闻道<br>勤而行之</i></small></p>
+
+
+
+
+      <nav class="menu">
+        <input id="menu-check" type="checkbox" />
+        <label id="menu-label" for="menu-check" class="unselectable">
+          <span class="icon close-icon">✕</span>
+          <span class="icon open-icon">☰</span>
+          <span class="text">Menu</span>
+        </label>
+        <ul>
+        
+        
+        <li><a href="../../../">首页</a></li>
+        
+        <li><a href="../../../cn/about/">关于</a></li>
+        
+        <li><a href="../../../cn/post/">博客</a></li>
+        
+        <li><a href="../../../cn/read/">读书</a></li>
+        
+        <li><a href="../../../cn/writing">写作</a></li>
+        
+        <li><a href="../../../cn/research/">研究</a></li>
+        
+        <li><a href="../../../cn/tools/">工具</a></li>
+        
+        <li><a href="../../../cn/cv-cn/shixiang">简历</a></li>
+        
+        <li><a href="../../../logo/qrcode.jpg">公众号</a></li>
+        
+        <li><a href="https://www.zhihu.com/people/shixiangwang">知乎</a></li>
+        
+        <li><a href="../../../cn/mark">推荐阅读</a></li>
+        
+        <li><a href="../../../en/">English</a></li>
+        
+        <li><a href="../../../categories/">分类</a></li>
+        
+        <li><a href="../../../tags/">标签</a></li>
+        
+        
+
+<li class="menu-extra"></li>
+
+
+
+<li><a href="https://github.com/ShixiangWang/home/edit/master/content/cn/post/2020-09-09-r-search-extension.md" target="_blank">编辑</a></li>
+
+
+<li><a href="../../../cn/index.xml" type="application/rss+xml" title="RSS feed">订阅</a></li>
+
+<li><a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="Attribution-NonCommercial-ShareAlike 4.0 International">版权</a></li>
+
+
+        </ul>
+      </nav>
+    </header>
+
+    <article class="main">
+      <header class="title">
+        
+
+<h1>浏览器 R 搜索插件</h1>
+
+
+
+<h3>王诗翔 &middot 
+2020-09-09</h3> 
+
+
+<p style="text-align:right;">
+  分类:
+  
+    <a href="../../../categories/r">r</a> &nbsp
+  
+  <br>
+  标签:
+  
+    <a href="../../../tags/r">r</a> &nbsp
+  
+    <a href="../../../tags/chrome">chrome</a> &nbsp
+  
+    <a href="../../../tags/extension">extension</a> &nbsp
+  
+    <a href="../../../tags/stackoverflow">stackoverflow</a> &nbsp
+  
+    <a href="../../../tags/wechat">wechat</a> &nbsp
+  
+</p>
+
+
+
+   
+  
+
+
+      </header>
+
+
+<p><code>r-search-extension</code> 是一款浏览器插件，它支持搜索 R 文档/问题以及微信平台搜索。它的使用及其简单，在浏览器搜索栏输入 <code>r</code> 然后跟一个空格，接着输入你想要搜索的关键词即可。</p>
+<h2 id="安装">安装</h2>
+<p>去版本<a href="https://github.com/ShixiangWang/r-search-extension/releases">发布页面</a>下载 <code>extension.zip</code> 文件，然后手动安装到谷歌或微软 Edge 浏览器。</p>
+<p>也可以通过坚果云下载：<a href="https://www.jianguoyun.com/p/Dde3c80Q6uuVCBj4s7oD">https://www.jianguoyun.com/p/Dde3c80Q6uuVCBj4s7oD</a></p>
+<p>注意，读者需要打开浏览器的开发者模式，然后指定解压缩后的目录进行安装，记得不要删除解压后的目录，最好把它和你的其他软件根目录放到一起。</p>
+<p><style>
+  .img-container {
+    text-align: center;
+    display: block;
+  }
+</style>
+
+  <img src="https://gitee.com/ShixiangWang/ImageCollection/raw/master/png/20200908234352.png" alt="">
+  </span>
+</p>
+<p><style>
+  .img-container {
+    text-align: center;
+    display: block;
+  }
+</style>
+
+  <img src="https://gitee.com/ShixiangWang/ImageCollection/raw/master/png/20200908234455.png" alt="">
+  </span>
+</p>
+<h2 id="使用">使用</h2>
+<p>输入关键字 <strong>r</strong>，然后敲入一个空格，接着输入想要查询的文档或包，浏览器会自动跳转到搜索页面。</p>
+<h4 id="可使用的命令">可使用的命令</h4>
+<blockquote>
+<p>下面的 <code>&lt;space&gt;</code> 指代空格键。</p>
+</blockquote>
+<ul>
+<li><code>r&lt;space&gt;keywords</code> 默认选项，会搜索 R 包/函数文档。</li>
+<li><code>r&lt;space&gt;!keywords</code> 仅搜索 R 包。</li>
+<li><code>r&lt;space&gt;?keywords</code> 搜索 Stack Overflow 上有 r 标签的问题和回答。</li>
+<li><code>r&lt;space&gt;?all:keywords</code> 搜索 Stack Overflow 搜有的问题和回答。</li>
+<li><code>r&lt;space&gt;/keyword</code> 搜索微信公众号文章。</li>
+<li><code>r&lt;space&gt;:help</code> 展示可使用的命令。</li>
+</ul>
+<h3 id="例子">例子</h3>
+<p>默认使用方式，基本上用这个就足够了。</p>
+<p><style>
+  .img-container {
+    text-align: center;
+    display: block;
+  }
+</style>
+
+  <img src="https://gitee.com/ShixiangWang/ImageCollection/raw/master/png/20200909123420.png" alt="">
+  </span>
+</p>
+<p>搜索相关文档。</p>
+<p><style>
+  .img-container {
+    text-align: center;
+    display: block;
+  }
+</style>
+
+  <img src="https://gitee.com/ShixiangWang/ImageCollection/raw/master/png/20200908234841.png" alt="">
+  </span>
+</p>
+<p>搜索相关包。</p>
+<p><style>
+  .img-container {
+    text-align: center;
+    display: block;
+  }
+</style>
+
+  <img src="https://gitee.com/ShixiangWang/ImageCollection/raw/master/png/20200908234652.png" alt="">
+  </span>
+</p>
+<p><style>
+  .img-container {
+    text-align: center;
+    display: block;
+  }
+</style>
+
+  <img src="https://gitee.com/ShixiangWang/ImageCollection/raw/master/png/20200908234946.png" alt="">
+  </span>
+</p>
+<p>搜索 R 相关问题。</p>
+<p><style>
+  .img-container {
+    text-align: center;
+    display: block;
+  }
+</style>
+
+  <img src="https://gitee.com/ShixiangWang/ImageCollection/raw/master/png/20200909123528.png" alt="">
+  </span>
+</p>
+<p>搜索微信公众号。</p>
+<p><style>
+  .img-container {
+    text-align: center;
+    display: block;
+  }
+</style>
+
+  <img src="https://gitee.com/ShixiangWang/ImageCollection/raw/master/png/20200909123628.png" alt="">
+  </span>
+</p>
+<h2 id="致谢">致谢</h2>
+<ul>
+<li><a href="https://rdrr.io/">https://rdrr.io/</a></li>
+<li><a href="https://github.com/huhu/search-extension-core">huhu</a></li>
+</ul>
+
+
+  <footer>
+  
+<nav class="post-nav">
+  <span class="nav-prev">&larr; <a href="../../../cn/post/2020-09-08-rcpp-intro/">Rcpp 简介：从 R 到 Rcpp</a></span>
+  <span class="nav-next"><a href="../../../cn/post/2020-09-13-random/">碎碎念-相关与因果</a> &rarr;</span>
+</nav>
+<script type="text/javascript">
+document.addEventListener('keyup', function(e) {
+  if (e.target.nodeName.toUpperCase() != 'BODY') return;
+  var url = false;
+  if (e.which == 37) {  
+    
+    url = '\/cn\/post\/2020-09-08-rcpp-intro\/';
+    
+  } else if (e.which == 39) {  
+    
+    url = '\/cn\/post\/2020-09-13-random\/';
+    
+  }
+  if (url) window.location = url;
+});
+</script>
+
+
+
+
+
+<div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js"></script>
+<script>
+  const gitalk = new Gitalk({
+    clientID: 'eed477936be7b88a8455',
+    clientSecret: '32b5dde22f3c95c4fad400a31632e34221b07e83',
+    repo: 'home',
+    owner: 'ShixiangWang',
+    admin: ['ShixiangWang'],
+    id: md5(window.location.pathname), 
+    distractionFreeMode: false 
+  });
+  (function() {
+    if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+      document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+      return;
+    }
+    gitalk.render('gitalk-container');
+  })();
+</script>
+
+
+
+
+
+<script async src="../../../js/fix-toc.js"></script>
+
+<script async src="../../../js/center-img.js"></script>
+
+<script async src="../../../js/right-quote.js"></script>
+
+<script async src="../../../js/no-highlight.js"></script>
+
+<script async src="../../../js/fix-footnote.js"></script>
+
+<script async src="../../../js/math-code.js"></script>
+
+<script async src="../../../js/external-link.js"></script>
+
+<script async src="../../../js/alt-title.js"></script>
+
+<script async src="../../../js/header-link.js"></script>
+
+
+<script src="//yihui.org/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script async src="//yihui.org/js/center-img.js"></script>
+
+  
+
+
+  
+  
+  
+
+  <div class="copyright"><a href="mailto:w_shixiang@163.com"><i class='far fa-envelope fa-1x'></i></a> · <a href="https://github.com/ShixiangWang"><i class='fab fa-github fa-1x'></i></a> · <a href="https://stackoverflow.com/users/7662327/shixiang-wang"><i class='fab fa-stack-overflow fa-1x'></i></a> · <a href="https://scholar.google.com/citations?user=FvNp0NkAAAAJ&amp;hl=zh-CN"><i class='ai ai-google-scholar ai-1x'></i></a> · <a href="https://orcid.org/0000-0001-9855-7357"><i class='ai ai-orcid ai-1x'></i></a> · <a href="https://www.researchgate.net/profile/Wang_Shixiang4"><i class='ai ai-researchgate ai-1x'></i></a> <br> 本站由 <a href="https://gohugo.io">Hugo</a> 和 <a href="https://bookdown.org/yihui/blogdown/">Blogdown</a> 强力驱动 © <a href="../../../">王诗翔</a> 2017 - 2020 </div>
+  
+  
+
+  <script type="text/javascript" src="//rf.revolvermaps.com/0/0/6.js?i=56h9es09xn7&amp;m=6&amp;c=ff0000&amp;cr1=ffffff&amp;f=arial&amp;l=1" async="async"></script>
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

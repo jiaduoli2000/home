@@ -1,0 +1,13 @@
+---
+title: "Curriculum Vitae"
+disable_comments: yes
+date: '2016-01-22'
+lastmod: "`r Sys.Date()`"
+geometry: margin=1in
+pdf: https://github.com/ShixiangWang/cv-shixiang/blob/main/Shixiang%20Wang%E2%80%99s%20CV.pdf
+type: cv
+urlcolor: blue
+fontsize: 10pt
+---
+
+Please go to <https://shixiangwang.github.io/cv-shixiang/> to see my CV in English.

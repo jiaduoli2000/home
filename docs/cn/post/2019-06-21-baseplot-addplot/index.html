@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"> 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+    
+    <link rel="stylesheet" href="../../../fonts/academicons-1.8.6/css/academicons.min.css"/>
+    <link rel="icon" type="image/png" sizes="32x32" href="../../../logo/bodhi.png"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    
+    
+    <title>R基本绘图：创建与添加图形 - 王诗翔</title>
+    
+     
+    <meta property="og:title" content="R基本绘图：创建与添加图形 - Shixiang Wang | 王诗翔">
+    
+
+    
+      
+    
+
+    
+
+    
+    
+
+
+<link href='//cdn.bootcss.com/highlight.js/9.12.0/styles/Xcode.min.css' rel='stylesheet' type='text/css' />
+
+
+
+    <link rel="stylesheet" href="../../../css/style.css" />
+    <link rel="stylesheet" href="../../../css/mystyle.css" /> 
+    <link rel="stylesheet" href="../../../css/fonts.css" />
+    
+<script async src="../../../js/load-typekit.js"></script>
+
+
+<link rel="stylesheet" href="../../../css/custom.css" />
+
+  </head>
+  
+  <body class="cn">
+    <header class="masthead">
+      
+
+<h1><a href="../../../logo/ShixiangWang.png"><img src="../../../logo/ShixiangWang.png" alt="Shixiang Wang" /></a></h1>
+<p align="right" style="margin-top:-50px;"><small>><i>上士闻道<br>勤而行之</i></small></p>
+
+
+
+
+      <nav class="menu">
+        <input id="menu-check" type="checkbox" />
+        <label id="menu-label" for="menu-check" class="unselectable">
+          <span class="icon close-icon">✕</span>
+          <span class="icon open-icon">☰</span>
+          <span class="text">Menu</span>
+        </label>
+        <ul>
+        
+        
+        <li><a href="../../../">首页</a></li>
+        
+        <li><a href="../../../cn/about/">关于</a></li>
+        
+        <li><a href="../../../cn/post/">博客</a></li>
+        
+        <li><a href="../../../cn/read/">读书</a></li>
+        
+        <li><a href="../../../cn/writing">写作</a></li>
+        
+        <li><a href="../../../cn/research/">研究</a></li>
+        
+        <li><a href="../../../cn/tools/">工具</a></li>
+        
+        <li><a href="../../../cn/cv-cn/shixiang">简历</a></li>
+        
+        <li><a href="../../../logo/qrcode.jpg">公众号</a></li>
+        
+        <li><a href="https://www.zhihu.com/people/shixiangwang">知乎</a></li>
+        
+        <li><a href="../../../cn/mark">推荐阅读</a></li>
+        
+        <li><a href="../../../en/">English</a></li>
+        
+        <li><a href="../../../categories/">分类</a></li>
+        
+        <li><a href="../../../tags/">标签</a></li>
+        
+        
+
+<li class="menu-extra"></li>
+
+
+
+
+
+
+<li><a href="https://github.com/ShixiangWang/home/edit/master/content/cn/post/2019-06-21-baseplot-addplot.Rmd" target="_blank">编辑</a></li>
+
+
+<li><a href="../../../cn/index.xml" type="application/rss+xml" title="RSS feed">订阅</a></li>
+
+<li><a href="http://creativecommons.org/licenses/by-nc-sa/4.0/" title="Attribution-NonCommercial-ShareAlike 4.0 International">版权</a></li>
+
+
+        </ul>
+      </nav>
+    </header>
+
+    <article class="main">
+      <header class="title">
+        
+
+<h1>R基本绘图：创建与添加图形</h1>
+
+
+
+<h3>王诗翔 &middot 
+2019-06-21</h3> 
+
+
+<p style="text-align:right;">
+  分类:
+  
+    <a href="../../../categories/r">r</a> &nbsp
+  
+  <br>
+  标签:
+  
+    <a href="../../../tags/r">r</a> &nbsp
+  
+    <a href="../../../tags/base-plot">base-plot</a> &nbsp
+  
+    <a href="../../../tags/plot">plot</a> &nbsp
+  
+</p>
+
+
+
+   
+  
+
+
+      </header>
+
+
+
+
+
+<blockquote>
+<p>R 遵循画家模式。</p>
+</blockquote>
+<p>高级绘图函数 + 低级绘图函数才能让图形丰富多样起来。</p>
+<div id="基本的低级绘图函数" class="section level2">
+<h2>基本的低级绘图函数</h2>
+<table>
+<caption><span id="tab:unnamed-chunk-1">Table 1: </span>&lt;U+5E38&gt;&lt;U+89C1&gt;&lt;U+57FA&gt;&lt;U+672C&gt;&lt;U+4F4E&gt;&lt;U+7EA7&gt;&lt;U+7ED8&gt;&lt;U+56FE&gt;&lt;U+51FD&gt;&lt;U+6570&gt;</caption>
+<colgroup>
+<col width="11%" />
+<col width="88%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">&lt;U+51FD&gt;&lt;U+6570&gt;</th>
+<th align="left">&lt;U+63CF&gt;&lt;U+8FF0&gt;</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">points()</td>
+<td align="left">&lt;U+6570&gt;&lt;U+636E&gt;&lt;U+7B26&gt;&lt;U+53F7&gt;</td>
+</tr>
+<tr class="even">
+<td align="left">lines()</td>
+<td align="left">&lt;U+7EBF&gt;&lt;U+6761&gt;</td>
+</tr>
+<tr class="odd">
+<td align="left">segments()</td>
+<td align="left">&lt;U+7EBF&gt;&lt;U+6BB5&gt;</td>
+</tr>
+<tr class="even">
+<td align="left">arrows()</td>
+<td align="left">&lt;U+7BAD&gt;&lt;U+5934&gt;</td>
+</tr>
+<tr class="odd">
+<td align="left">xspline()</td>
+<td align="left">&lt;U+5149&gt;&lt;U+6ED1&gt;&lt;U+66F2&gt;&lt;U+7EBF&gt;</td>
+</tr>
+<tr class="even">
+<td align="left">rect()</td>
+<td align="left">&lt;U+77E9&gt;&lt;U+5F62&gt;</td>
+</tr>
+<tr class="odd">
+<td align="left">polygon()</td>
+<td align="left">&lt;U+591A&gt;&lt;U+8FB9&gt;&lt;U+5F62&gt;</td>
+</tr>
+<tr class="even">
+<td align="left">polypath()</td>
+<td align="left">&lt;U+591A&gt;&lt;U+8FB9&gt;&lt;U+5F62&gt;&lt;U+8DEF&gt;&lt;U+5F84&gt;</td>
+</tr>
+<tr class="odd">
+<td align="left">rasterImage()</td>
+<td align="left">&lt;U+4F4D&gt;&lt;U+56FE&gt;&lt;U+FF08&gt;&lt;U+5728&gt;&lt;U+56FE&gt;&lt;U+5F62&gt;&lt;U+4E0A&gt;&lt;U+53EF&gt;&lt;U+4EE5&gt;&lt;U+6DFB&gt;&lt;U+52A0&gt;&lt;U+5916&gt;&lt;U+90E8&gt;&lt;U+56FE&gt;&lt;U+7247&gt;&lt;U+FF09&gt;</td>
+</tr>
+<tr class="even">
+<td align="left">text()</td>
+<td align="left">&lt;U+6587&gt;&lt;U+672C&gt;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="添加图形" class="section level2">
+<h2>添加图形</h2>
+<p>还是要一顿操作猛如虎，才能学到本事。</p>
+<pre class="r"><code>x = 1:10
+y = matrix(sort(rnorm(30)), ncol=3)
+plot(x, y[, 1], ylim = range(y), ann=F, axes = F, type=&quot;l&quot;, col=&quot;gray&quot;)
+box(col=&quot;gray&quot;)</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>开始加东西。</p>
+<pre class="r"><code>plot(x, y[, 1], ylim = range(y), ann=F, axes = F, type=&quot;l&quot;, col=&quot;gray&quot;)
+box(col=&quot;gray&quot;)
+
+points(x, y[,1])
+lines(x, y[,2], col=&quot;gray&quot;)
+points(x, y[,2], pch=2)
+lines(x, y[,3], col=&quot;gray&quot;)
+points(x, y[,3], pch=3)</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>在点旁边添加文本有时候很有用，使用 <code>pos</code> 可以设置数据符号与文本之间的偏移量。</p>
+<pre class="r"><code>y = x = 1:5
+plot(x, y, ann=F, axes=F, col=&quot;gray&quot;, pch=16)
+box(col=&quot;gray&quot;)
+
+text(x[-3], y[-3], c(&quot;right&quot;, &quot;top&quot;, &quot;bottom&quot;, &quot;left&quot;),
+     pos=c(4, 3, 2, 1))
+text(3, 3, &quot;overlay&quot;)</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p><code>text()</code> 还可以接受 R 表达式。</p>
+<pre class="r"><code>y = x = 1:5
+plot(x, y, ann=F, axes=F, col=&quot;gray&quot;, pch=16)
+box(col=&quot;gray&quot;)
+
+text(x[-3], y[-3], c(&quot;right&quot;, &quot;top&quot;, &quot;bottom&quot;, &quot;left&quot;),
+     pos=c(4, 3, 2, 1))
+text(3, 3, ~ x^2)</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>上述处理的都是向量数据，而<code>matplot()</code>、<code>matpoints()</code> 和 <code>matlines()</code>都是处理矩阵形式数据的。</p>
+</div>
+<div id="绘图工具" class="section level2">
+<h2>绘图工具</h2>
+<p><code>grid()</code> 可以添加网格线； <code>abline()</code> 添加直线； <code>box()</code> 在图形周围绘制矩形；<code>rug()</code> 可以沿着坐标轴绘制“地毯”图。</p>
+<pre class="r"><code>x = runif(20, 1, 10)
+y = x + rnorm(20)
+plot(x, y, ann=F, axes=F, col=&quot;gray&quot;, pch=16)
+box(col=&quot;gray&quot;)
+
+lmfit = lm(y ~ x)
+abline(lmfit)
+arrows(5, 8, 7, predict(lmfit, data.frame(x=7)), 
+       length = 0.1)
+text(5, 8, &quot;Line of best fit&quot;, pos = 2)</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>y = rnorm(50)
+hist(y, main=&quot;&quot;, xlab=&quot;&quot;, ylab=&quot;&quot;, axes=F, border=&quot;gray&quot;, col=&quot;light gray&quot;)
+box(col=&quot;gray&quot;)
+rug(y, ticksize = 0.02)</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="在边缘处添加图形" class="section level2">
+<h2>在边缘处添加图形</h2>
+<p><code>mtext()</code> 函数可以在边缘区域的任何位置绘制文本，它的 <code>outer</code> 参数控制是在图像区域还是外部区域的边缘处输出。
+<code>side</code> 控制在哪个边缘区域输出，1 - 底部，2 - 左侧，3 - 顶部，4 - 右侧。</p>
+<p>我们也可以在图像区域或外部区域使用一般在绘图区域使用的函数，不过有点麻烦。我们需要先设定 <code>xpd</code> 的状态。
+下面展示了一个例子：将绘制出的一个在两个图像之间穿越的矩形。</p>
+<pre class="r"><code>y1 = rnorm(100)
+y2 = rnorm(100)
+
+par(mfrow=c(2,1), xpd =NA)
+
+# 绘制第一个图形
+plot(y1, type=&quot;l&quot;, axes=FALSE,
+     xlab=&quot;&quot;, ylab=&quot;&quot;, main=&quot;&quot;)
+box(col=&quot;gray&quot;)
+mtext(&quot;Left end of margin&quot;, adj=0, side=3)
+lines(x=c(20,20,40,40), y=c(-7, max(y1), max(y1), -7), lwd=3, col=&quot;gray&quot;)
+
+# 绘制第二个图形
+plot(y2, type=&quot;l&quot;, axes=FALSE, 
+     xlab=&quot;&quot;, ylab=&quot;&quot;, main=&quot;&quot;)
+box(col=&quot;gray&quot;)
+mtext(&quot;Right end of margin&quot;, adj=1, side=3)
+lines(x=c(20, 20, 40, 40), y=c(7, min(y2), min(y2), 7), 
+      lwd=3, col=&quot;gray&quot;)</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>
+<div id="图例" class="section level2">
+<h2>图例</h2>
+<p><code>legend()</code> 函数用于在图像中添加图例或关键字。</p>
+<p>第一个例子展示在散点图中添加图例的方法，图例将不同的组名和对应的符号关联起来。前 2 个参数给定对于用户坐标系统，
+图例左上角的为止。第 3 个参数提供图例需要的标签，此外，通过指定 <code>pch</code> 参数可以在标签旁边绘制符号。</p>
+<pre class="r"><code>with(iris,
+     plot(Sepal.Length, Sepal.Width, pch=as.numeric(Species), cex=1.2))
+legend(6.1, 4.4, c(&quot;setosa&quot;, &quot;versicolor&quot;, &quot;virginica&quot;),
+       cex=1.5, pch=1:3)</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>下一个例子展示条形图添加图例，图例中组名对应不同的填充模式。</p>
+<pre class="r"><code>barplot(VADeaths[1:2, ], angle = c(45, 135), density = 20, 
+        col=&quot;gray&quot;, names = c(&quot;RM&quot;, &quot;RF&quot;, &quot;UM&quot;, &quot;UF&quot;))
+legend(0.4, 38, c(&quot;55-59&quot;, &quot;50-54&quot;), cex=1.5, angle = c(135, 45), density = 20, fill = &quot;gray&quot;)</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>注意，<strong>怎么将图例符号对应于图形完全是由用户控制的</strong>。所以在绘制时一定要额外注意，相比于传统图形绘制，
+<strong>ggplot2</strong> 和 <strong>lattice</strong> 包会自动映射，更为方便。</p>
+</div>
+<div id="坐标轴" class="section level2">
+<h2>坐标轴</h2>
+<p>有时候我们想要修改坐标轴，我们第一步需要禁止生成默认的坐标轴，这一点可以通过设置大多数高级函数的
+<code>axes</code> 参数实现。 通过 <code>par()</code> 指定 <code>xaxt = "n"</code> 和 <code>yaxt = "n"</code> 也可以实现该目的。</p>
+<p>下面举一个定制坐标轴的例子：</p>
+<blockquote>
+<p>开始绘制一个初始图形，并且绘制 y 轴的尺度是摄氏度。接下来再绘制一个华氏温度的 y 轴。x 轴使用特殊标签，而不是默认刻度线的数值位置。</p>
+</blockquote>
+<pre class="r"><code># 先生成数据并绘制没有数据符号和坐标轴的空图
+x = 1:2
+y = runif(2, 0, 100)
+par(mar=c(4, 4, 2, 4))
+plot(x, y, type = &quot;n&quot;, xlim = c(0.5, 2.5), ylim = c(-10, 110),
+     axes=FALSE, ann=FALSE)
+
+# 指定主 y 轴摄氏度刻度位置。
+axis(2, at=seq(0, 100, 20))  # 2 表示绘制在左边，at指定刻度线位置
+mtext(&quot;Temperature (Centigrade)&quot;, side = 2, line = 3)
+
+# 绘制有特殊标签的底部坐标轴，以及表示华氏温度的 y 轴
+axis(1, at=1:2, labels = c(&quot;Treatment1&quot;, &quot;Treatment2&quot;))
+axis(4, at=seq(0, 100, 20), labels = seq(0, 100, 20)*9/5 + 32)
+mtext(&quot;Temperature (Fahrenheit)&quot;, side=4, line=3)
+box()
+
+# 最后画一些温度样式的符号表示实际温度
+segments(x, 0, x, 100, lwd=20)
+segments(x, 0, x, 100, lwd=16, col=&quot;white&quot;)
+segments(x, 0, x, y, lwd = 16, col = &quot;gray&quot;)</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+</div>
+<div id="坐标系统" class="section level2">
+<h2>坐标系统</h2>
+<p>在绘图区域内的图形输出是根据坐标轴的尺度自动定位的，而图形边缘处的文本则是根据距离绘图区域边界多少
+文本行定位的。</p>
+<div id="par-函数" class="section level3">
+<h3>par() 函数</h3>
+<p>一般情况下我们使用 <code>par()</code> 函数获取或设定图形的状态。其中 <code>din</code>、<code>fin</code>和<code>pin</code> 3个状态反映了当前绘图设备、图像区域以及回去区域的尺寸（宽度和高度），以英寸为单位。</p>
+<pre class="r"><code>par(&quot;din&quot;)
+#&gt; [1] 7 5
+par(&quot;fin&quot;)
+#&gt; [1] 7 5
+par(&quot;pin&quot;)
+#&gt; [1] 5.76 3.16</code></pre>
+<p><code>usr</code> 反映坐标轴范围。</p>
+<pre class="r"><code>par(&quot;usr&quot;)
+#&gt; [1] 0 1 0 1</code></pre>
+<p>下面我们画一把与实际物理尺寸对应的尺子。</p>
+<pre class="r"><code># 绘制一个空白图形并进行计算
+plot(0:1, 0:1, type=&quot;n&quot;, axes=F, ann=F)
+usr = par(&quot;usr&quot;)
+pin = par(&quot;pin&quot;)
+xcm = diff(usr[1:2])/(pin[1]*2.54)
+ycm = diff(usr[3:4])/(pin[2]*2.54)
+
+# 现在绘制的图形是根据厘米表示的
+par(xpd=NA)
+rect(0 + 0.2*xcm, 0-0.2*ycm,
+1 + 0.2*xcm, 0.3-0.2*ycm,
+col=&quot;gray&quot;, border = NA)
+
+# 绘制边框、刻度和标签
+rect(0, 0, 1, 0.3, col=&quot;white&quot;)
+segments(seq(1, 8, 0.1)*xcm, 0,
+seq(1, 8, 0.1)*xcm, 
+c(rep(c(0.5, 
+rep(0.25, 4),
+0.35, 
+rep(0.25, 4)), 7), 
+0.5)*ycm)
+text(1:8*xcm, 0.6*ycm, 0:7, adj=c(0.5, 0))
+text(8.2*xcm, 0.6*ycm, &quot;cm&quot;, adj=c(0, 0))</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+<div id="覆盖输出" class="section level3">
+<h3>覆盖输出</h3>
+<p>有时在同一图中绘制 2 个数据集非常有用，此时数据集共享一个 x 变量，但拥有不同的 y 尺度。</p>
+<p>至少有 2 种方法：</p>
+<ul>
+<li>调用 <code>par(new=TRUE)</code> 实现 2 个不同图形在彼此之上重叠绘制</li>
+<li>在绘制第二个数据之前显式地重置 <code>usr</code> 状态</li>
+</ul>
+<p><strong>方法一</strong></p>
+<pre class="r"><code>drunkness = ts(c(3875, 4846, 5128, 5773, 7327,
+                 6688, 5582, 3473, 3186, rep(NA, 51)),
+               start = 1912, end = 1971)
+
+par(mar = c(5, 6, 2, 4))
+plot(drunkness, lwd=3, col=&quot;gray&quot;, ann=F, las=2)
+mtext(&quot;Drunkness\nRelated Arrest&quot;, side=2, line=3.5)
+par(new=TRUE)
+plot(nhtemp, ann=F, axes=F)
+mtext(&quot;Temperature (F)&quot;, side=4, line=3)
+title(&quot;Using par(new=TRUE)&quot;)
+axis(4)</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><strong>方法二</strong></p>
+<p>该方法只绘制一个图形。</p>
+<pre class="r"><code>par(mar=c(5, 6, 2, 4))
+plot(drunkness, lwd=3, col=&quot;gray&quot;, ann=F, las=2)
+mtext(&quot;Drunkness\nRelated Arrest&quot;, side=2, line=3.5)
+usr = par(&quot;usr&quot;)
+par(usr=c(usr[1:2], 47.6, 54.9))
+lines(nhtemp)
+mtext(&quot;Temperature (F)&quot;, side=4, line=3)
+title(&quot;Using par(usr=...)&quot;)
+axis(4)</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p><strong>方法三</strong></p>
+<p>一些高级函数提供了一个叫 <code>add</code> 的参数，如果设置为 <code>TRUE</code>，将会在现有图形上添加输出。</p>
+<pre class="r"><code>with(trees,
+     expr = {
+     plot(Height, Volume, pch=3, xlab=&quot;Height (ft)&quot;, 
+          ylab=expression(paste(&quot;Volume &quot;, &quot;ft^3&quot;)))
+     symbols(Height, Volume, circles = Girth/12,
+             fg=&quot;gray&quot;, inches = FALSE, add=TRUE)
+       })</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+</div>
+</div>
+<div id="特殊情况" class="section level2">
+<h2>特殊情况</h2>
+<div id="隐藏的坐标轴尺度" class="section level3">
+<h3>隐藏的坐标轴尺度</h3>
+<p>因为这个原因，在条形图和箱线图中添加图形输出会比较麻烦。为何做到这点，我们需要获取函数的返回值。这个值会给出函数绘制的每一个条形的中点 x 位置。</p>
+<p><strong>条形图例子</strong>：添加水平参考线段</p>
+<pre class="r"><code>y = sample(1:10)
+midpts = barplot(y, col=&quot;lightgray&quot;)
+width = diff(midpts[1:2])/4
+left = rep(midpts, y - 1) - width
+right = rep(midpts, y - 1) + width
+heights = unlist(apply(matrix(y, ncol=10),
+                       2, seq))[-cumsum(y)]
+segments(left, heights, right, heights,
+         col=&quot;white&quot;)</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><strong>箱线图例子</strong>：添加抖动点</p>
+<pre class="r"><code>with(ToothGrowth,
+     {
+       boxplot(len ~ supp, border = &quot;gray&quot;,
+               col=&quot;lightgray&quot;, boxwex=0.5)
+       points(jitter(rep(1:2, each=30), 0.5),
+              unlist(split(len, supp)),
+              cex=0.5, pch=16)
+     })</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+</div>
+<div id="绘制三维图像" class="section level3">
+<h3>绘制三维图像</h3>
+<p>添加图像步骤：</p>
+<ol style="list-style-type: decimal">
+<li>获取 <code>persp()</code> 函数返回的变换矩阵 (本身该函数会绘制三维图像)</li>
+<li>使用 <code>trans3d()</code> 函数将三维位置转换为二位位置</li>
+<li>将以上结果传给标准函数，如 <code>lines()</code>、<code>text()</code></li>
+</ol>
+<p>下面绘制火山并添加等高线。</p>
+<pre class="r"><code>z = 2*volcano
+x = 10 * (1:nrow(z))
+y = 10 * (1:ncol(z))
+
+trans = persp(x, y, z, zlim=c(0, max(z)),
+              theta=150, phi=12, lwd=.5,
+              scale=F, axes=F)
+
+# 计算等高线
+clines = contourLines(x, y, z)
+# 将等高线 x 与 y 顶点位置传给 trans3d()
+lapply(clines,
+       function(contour) {
+         lines(trans3d(contour$x, contour$y, 0, trans))
+       })</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<pre><code>#&gt; [[1]]
+#&gt; NULL
+#&gt; 
+#&gt; [[2]]
+#&gt; NULL
+#&gt; 
+#&gt; [[3]]
+#&gt; NULL
+#&gt; 
+#&gt; [[4]]
+#&gt; NULL
+#&gt; 
+#&gt; [[5]]
+#&gt; NULL
+#&gt; 
+#&gt; [[6]]
+#&gt; NULL
+#&gt; 
+#&gt; [[7]]
+#&gt; NULL
+#&gt; 
+#&gt; [[8]]
+#&gt; NULL
+#&gt; 
+#&gt; [[9]]
+#&gt; NULL
+#&gt; 
+#&gt; [[10]]
+#&gt; NULL
+#&gt; 
+#&gt; [[11]]
+#&gt; NULL
+#&gt; 
+#&gt; [[12]]
+#&gt; NULL
+#&gt; 
+#&gt; [[13]]
+#&gt; NULL
+#&gt; 
+#&gt; [[14]]
+#&gt; NULL
+#&gt; 
+#&gt; [[15]]
+#&gt; NULL
+#&gt; 
+#&gt; [[16]]
+#&gt; NULL
+#&gt; 
+#&gt; [[17]]
+#&gt; NULL
+#&gt; 
+#&gt; [[18]]
+#&gt; NULL
+#&gt; 
+#&gt; [[19]]
+#&gt; NULL
+#&gt; 
+#&gt; [[20]]
+#&gt; NULL</code></pre>
+</div>
+</div>
+<div id="创建新图形" class="section level2">
+<h2>创建新图形</h2>
+<p><code>plot.new()</code> 函数开启一个新的绘图（与 <code>frame()</code> 等价），并将 x 与 y 尺度设置为 (0, 1) 区间。</p>
+<p><code>plot.window()</code> 函数重置用户坐标系统的尺度。</p>
+<p><code>plot.xy()</code> 在绘图区域绘制数据符号和线条。</p>
+<div id="从头创建一个简单图形" class="section level3">
+<h3>从头创建一个简单图形</h3>
+<pre class="r"><code>plot.new()  # 开启一个空白绘图
+plot.window(range(pressure$temperature),
+            range(pressure$pressure))  # 设定坐标轴尺度
+plot.xy(pressure, type=&quot;p&quot;)  # 绘制图形
+box()  # 围绕绘图区域绘制矩形
+axis(1) # 添加轴线
+axis(2) # 添加轴线</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p>这和 <code>plot()</code> 绘制的散点图完全一致。</p>
+</div>
+<div id="从头创建一个复杂图形" class="section level3">
+<h3>从头创建一个复杂图形</h3>
+<p>绘制泰坦尼克号成年男性和女性幸存者数目。</p>
+<pre class="r"><code>groups = dimnames(Titanic)[[1]]
+males = Titanic[, 1, 2, 2]
+females = Titanic[, 2, 2, 2]
+
+males
+#&gt;  1st  2nd  3rd Crew 
+#&gt;   57   14   75  192
+females
+#&gt;  1st  2nd  3rd Crew 
+#&gt;  140   80   76   20</code></pre>
+<pre class="r"><code># 6 行内容，4行用户绘制条形，1行用于绘制x轴，1行绘制图例（-1）
+par(mar=c(0.5, 3, 0.5, 1))
+plot.new()
+plot.window(xlim = c(-200,200), ylim = c(-1.5, 4.5))
+
+ticks = seq(-200, 200, 100)
+y = 1:4
+h = 0.2
+
+# 开始画图
+# x 轴绘制在绘图区域内部（设置pos=0）
+lines(rep(0,2), c(-1.5, 4.5), col=&quot;gray&quot;)
+segments(-200, y, 200, y, lty = &quot;dotted&quot;)
+rect(-males, y-h, 0, y+h, col=&quot;darkgray&quot;)
+rect(0, y-h,  females, y+h, col=&quot;lightgray&quot;)
+mtext(groups, at=y, adj=1, side=2, las=2)
+par(cex.axis=0.5, mex=0.5)
+axis(1, at=ticks, labels=abs(ticks), pos=0)
+
+# 在底部绘制图例
+# 确保矩形能包含文字
+tw = 1.5*strwidth(&quot;females&quot;)
+rect(-tw, -1-h, 0, -1+h, col=&quot;darkgray&quot;)
+rect(0, -1-h, tw, -1+h, col=&quot;lightgray&quot;)
+text(0, -1, &quot;males&quot;, pos=2)
+text(0, -1, &quot;females&quot;, pos=4)</code></pre>
+<p><img src="../../../cn/post/2019-06-21-baseplot-addplot_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+</div>
+</div>
+<div id="创建绘图函数" class="section level2">
+<h2>创建绘图函数</h2>
+<p><code>xy.coords()</code>允许在新建的函数中灵活指定 x 与 y 参数。该函数接收 x 参数与 y 参数并且创建一个标准的包含 x 值、y 值以及坐标轴合理标签的对象。</p>
+<p>一个新的绘图函数可能需要强制将 <code>xpd</code> 状态设定为 <code>NA</code>，从而在绘图区域外绘制线条和文本。这种情况下可以在函数的末尾恢复初始的绘图状态。</p>
+<p>可以采用以下技术：</p>
+<pre class="r"><code># 放在函数的开始部分
+opar = par(no.readonly = TRUE)
+on.exit(par(opar))</code></pre>
+<p>下面是一个绘图模板（可以看做 <code>plot()</code> 函数的精简版本），提供了一个供他人使用的绘图函数的出发点。</p>
+<pre class="r"><code>plot.newclass = 
+  function(x, y=NULL, 
+           main=&quot;&quot;, sub=&quot;&quot;,
+           xlim=NULL, ylim=NULL,
+           axes=TRUE, ann=par(&quot;ann&quot;),
+           col=par(&quot;col&quot;), 
+           ...) {
+    xy = xy.coords(x, y)
+    if (is.null(xlim)) {
+      xlim = range(xy$x[is.finite(xy$x)])
+    }
+    if (is.null(ylim)) {
+      ylim = range(xy$y[is.finite(xy$y)])
+    }
+    opar = par(no.readonly = TRUE)
+    on.exit(par(opar))
+    plot.new()
+    plot.window(xlim, ylim, ...)
+    points(xy$x, xy$y, col=col, ...)
+    if (axes) {
+      axis(1)
+      axis(2)
+      box()
+    }
+    if (ann) {
+      title(main=main, sub=sub, xlab=xy$xlab, ylab=xy$ylab, ...)
+    }
+           }</code></pre>
+<hr />
+<p>资料：《R绘图系统》（第二版）</p>
+</div>
+
+
+  <footer>
+  
+<nav class="post-nav">
+  <span class="nav-prev">&larr; <a href="../../../cn/post/use-nmf-aheatmap/">使用NMF包绘制热图</a></span>
+  <span class="nav-next"><a href="../../../cn/post/2019-06-21-baseplot-multiplots/">R传统图形绘制多图</a> &rarr;</span>
+</nav>
+<script type="text/javascript">
+document.addEventListener('keyup', function(e) {
+  if (e.target.nodeName.toUpperCase() != 'BODY') return;
+  var url = false;
+  if (e.which == 37) {  
+    
+    url = '\/cn\/post\/use-nmf-aheatmap\/';
+    
+  } else if (e.which == 39) {  
+    
+    url = '\/cn\/post\/2019-06-21-baseplot-multiplots\/';
+    
+  }
+  if (url) window.location = url;
+});
+</script>
+
+
+
+
+
+<div id="gitalk-container"></div>
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+<script src="https://cdn.bootcss.com/blueimp-md5/2.10.0/js/md5.js"></script>
+<script>
+  const gitalk = new Gitalk({
+    clientID: 'eed477936be7b88a8455',
+    clientSecret: '32b5dde22f3c95c4fad400a31632e34221b07e83',
+    repo: 'home',
+    owner: 'ShixiangWang',
+    admin: ['ShixiangWang'],
+    id: md5(window.location.pathname), 
+    distractionFreeMode: false 
+  });
+  (function() {
+    if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+      document.getElementById('gitalk-container').innerHTML = 'Gitalk comments not available by default when the website is previewed locally.';
+      return;
+    }
+    gitalk.render('gitalk-container');
+  })();
+</script>
+
+
+
+
+
+<script async src="../../../js/fix-toc.js"></script>
+
+<script async src="../../../js/center-img.js"></script>
+
+<script async src="../../../js/right-quote.js"></script>
+
+<script async src="../../../js/no-highlight.js"></script>
+
+<script async src="../../../js/fix-footnote.js"></script>
+
+<script async src="../../../js/math-code.js"></script>
+
+<script async src="../../../js/external-link.js"></script>
+
+<script async src="../../../js/alt-title.js"></script>
+
+<script async src="../../../js/header-link.js"></script>
+
+
+<script src="//yihui.org/js/math-code.js"></script>
+<script async src="//cdn.bootcss.com/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+<script async src="//yihui.org/js/center-img.js"></script>
+
+  
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+
+
+
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/r.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/yaml.min.js"></script>
+<script src="//cdn.bootcss.com/highlight.js/9.12.0/languages/tex.min.js"></script>
+<script>hljs.configure({languages: []}); hljs.initHighlightingOnLoad();</script>
+
+
+
+
+  
+  
+  
+
+  <div class="copyright"><a href="mailto:w_shixiang@163.com"><i class='far fa-envelope fa-1x'></i></a> · <a href="https://github.com/ShixiangWang"><i class='fab fa-github fa-1x'></i></a> · <a href="https://stackoverflow.com/users/7662327/shixiang-wang"><i class='fab fa-stack-overflow fa-1x'></i></a> · <a href="https://scholar.google.com/citations?user=FvNp0NkAAAAJ&amp;hl=zh-CN"><i class='ai ai-google-scholar ai-1x'></i></a> · <a href="https://orcid.org/0000-0001-9855-7357"><i class='ai ai-orcid ai-1x'></i></a> · <a href="https://www.researchgate.net/profile/Wang_Shixiang4"><i class='ai ai-researchgate ai-1x'></i></a> <br> 本站由 <a href="https://gohugo.io">Hugo</a> 和 <a href="https://bookdown.org/yihui/blogdown/">Blogdown</a> 强力驱动 © <a href="../../../">王诗翔</a> 2017 - 2020 </div>
+  
+  
+
+  <script type="text/javascript" src="//rf.revolvermaps.com/0/0/6.js?i=56h9es09xn7&amp;m=6&amp;c=ff0000&amp;cr1=ffffff&amp;f=arial&amp;l=1" async="async"></script>
+  </footer>
+  </article>
+  
+  </body>
+</html>
+

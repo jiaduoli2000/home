@@ -1,0 +1,255 @@
+---
+title: "UCSCXenaTools: R API for UCSC Xena Hubs"
+author: "Shixiang Wang"
+show_toc: true
+date: "`r Sys.Date()`"
+output: 
+  tint::tintPdf
+type: cv
+pdf: ../ucscxenatools-api.pdf
+categories: [bioinformatics, r]
+tags: [r, package, UCSCXenaTools]
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  tidy = TRUE,
+  strip.white = TRUE,
+  comment = "#>"
+)
+```
+
+This vignette gives users the summary information of API functions provided by **UCSCXenaTools** for UCSC Xena. 
+
+Before using API, user should know some concepts about Xena elements. Following description is copied from [xenaPython `__init__.py`](https://github.com/ucscXena/xenaPython/blob/master/xenaPython/__init__.py).
+
+> Data rows are associated with "sample" IDs.
+>
+> Sample IDs are unique within a "**cohort**".
+>s
+> A "**dataset**" is a particular assay of a cohort, e.g. gene expression.
+>
+> Datasets have associated metadata, specifying their data type and cohort.
+>
+> There are three primary data types: **dense matrix** (samples by probes), **sparse** (sample, position, variant), and **segmented** (sample, position, value).
+> 
+> Dense matrices can be genotypic or phenotypic. Phenotypic matrices have associated **field metadata** (descriptive names, codes, etc.).
+Genotypic matricies may have an associated **probeMap**, which maps probes to genomic locations. If a matrix has hugo probeMap, the probes themselves are gene names. Otherwise, a probeMap is used to map a gene location to a set of probes.
+
+# New features
+
+A new series of functions (mostly) starting with `fetch_` have been introduced to help fetch a small amount of data by Xena APIs.
+
+Now three are available:
+
+- `fetch_dense_values()`: fetches values from a dense matrix.
+- `fetch_dataset_samples()`: fetches samples from a dataset
+- `fetch_dataset_identifiers()`: fetches identifies from a dataset.
+
+They have similar arguments and all the details can be viewed by running `?fetch` in R console after `library(UCSCXenaTools)`.
+
+# API categories
+
+API functions can be divided into two classes: **lower API functions** and **higher API functions**. 
+They have following difference:
+
+- The main difference between them is that the target of higher API functions is `XenaHub` object, which is
+a S4 class built in R. While the targets of lower API functions are Xena hub urls, cohort names or 
+dataset names with character format. The `XenaHub` object can provide more uniform operation methods and can be
+used to download corresponding datasets quickly and easily 
+(detail see [another vignette](https://shixiangwang.github.io/home/en/tools/ucscxenatools-intro/)).
+- Lower API functions are not registered in package 
+[NAMESPACE](https://github.com/ShixiangWang/UCSCXenaTools/blob/master/NAMESPACE), so user may not access them
+after `library(UCSCXenaTools)`, user need to use `UCSCXenaTools:::fun_name` instead.
+- Lower API functions have no help pages, so user cannot find any description about them in R, which means
+you cannot use `?fun_name` to get help. However, API report part in this vignette shows all avaiable API functions and 
+their short description.
+- Higher API functions are built on lower API functions, they return more meaningful and easy results for operation. Most of lower API functions return nested lists as results, user need to tidy them before using them in next step.
+
+
+## Lower API functions
+
+Lower API functions also have 2 classes: 
+
+- one is generated from 
+[`.xq` files](https://github.com/ShixiangWang/UCSCXenaTools/tree/master/inst/queries), 
+function names all start with `.p_`. All `.xq` files are copied from [xenaPython](https://github.com/ucscXena/xenaPython) package, which is official Python API for Xena.
+These functions are dynamicly created when **UCSCXenaTools** loaded. Their names are given as following: 
+
+    ```{r include=FALSE}
+    #devtools::load_all("~/Repo/UCSCXenaTools/")
+    library(UCSCXenaTools)
+    all_vs = ls(envir = as.environment("package:UCSCXenaTools"),
+                all.names = TRUE)
+    ```
+    
+    ```{r echo=FALSE}
+    grep("^\\.p", all_vs, value = TRUE)
+    ```
+
+- the other one is created in package. The function names all start with `.`, are given as following:
+
+    ```{r, echo=F}
+    funs_low_in = c(
+        '.host_cohorts',
+        '.cohort_datasets',
+        '.cohort_datasets_count',
+        '.cohort_samples_each',
+        '.cohort_samples_any',
+        '.cohort_samples_all',
+        '.dataset_samples_each',
+        '.dataset_samples_any',
+        '.dataset_samples_all'
+    )
+    funs_low_in
+    ```
+
+
+I don't know how to write these query sentence for Xena Hubs. So here I want to
+say thanks to authors of [**xenaPython**](https://github.com/ucscXena/xenaPython) 
+and [**xenaR**](https://github.com/mtmorgan/XenaR) packages.
+
+# API report
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+#devtools::load_all("~/Repo/UCSCXenaTools/")
+library(dplyr)
+library(UCSCXenaTools)
+load(system.file("api.RData", package = "UCSCXenaTools"))
+api_df = arrange(api_df, Level)
+DT::datatable(api_df, caption = "API functions in UCSCXenaTools")
+```
+
+Of note, I don't know test all functions generated from `.xq` files, most of them works.
+Sometimes functions return you errors or `list()` may caused by invaild format or bad network, 
+you should try more times. If you make sure there are problems/errors in query procedure,
+you can check corresponding query variables:
+
+```{r echo=FALSE}
+    grep("^\\.xq", all_vs, value = TRUE)
+```
+
+For example, you'd like to check `.p_all_cohorts` function, you can take a look
+at `.xq_all_cohorts` object.
+
+```{r}
+.xq_all_cohorts
+```
+
+`cat` it may give you more easy-to-read format.
+
+```{r}
+cat(.xq_all_cohorts)
+```
+
+# Use cases
+
+Several use cases are modified from [README](https://github.com/ucscXena/xenaPython) of **xenaPython** package. 
+
+Load package firstly.
+
+```{r}
+library(UCSCXenaTools)
+```
+
+
+You can find out host id and dataset id from <https://xenabrowser.net/datapages/>, a more recommened way is use `XenaData` in **UCSCXenaTools**.
+
+```{r}
+head(XenaData)[,1:5]
+```
+
+The host id is stored at `XenaHosts` column, and dataset id is stored at `XenaDatasets` column.
+
+**Of note, when you want to query single sample or gene with function starts with `.p_`, you must transform id of sample or gene into a `list`**
+
+## Query four samples and three identifers expression
+
+```{r}
+hub = "https://toil.xenahubs.net"
+dataset = "tcga_RSEM_gene_tpm"
+samples = c("TCGA-02-0047-01","TCGA-02-0055-01","TCGA-02-2483-01","TCGA-02-2485-01")
+probes = c('ENSG00000282740.1', 'ENSG00000000005.5', 'ENSG00000000419.12')
+.p_dataset_probe_values(hub, dataset, samples, probes)
+```
+
+
+Query one probe. As metioned above, one must transform id of proble or sample int a `list` when he wants to query only one sample/probe.
+
+**Bad query**:
+
+```{r}
+.p_dataset_probe_values(hub, dataset, samples, 'ENSG00000282740.1')
+```
+
+**Good query**:
+
+```{r}
+.p_dataset_probe_values(hub, dataset, samples, as.list('ENSG00000282740.1'))
+```
+
+## Query four samples and three genes expression, when the dataset you want to query has a identifier-to-gene mapping
+
+> identifier-to-gene mapping (i.e. xena probeMap)
+
+```{r}
+genes =c("TP53", "RB1", "PIK3CA")
+.p_dataset_gene_probe_avg(hub, dataset, samples, genes)
+```
+
+## If the dataset does not have id-to-gene mapping, but the dataset used gene names as its identifier
+
+In this situation, you can query gene expression like two ways above will not work.
+
+```{r}
+hub = "https://toil.xenahubs.net"
+dataset = "tcga_RSEM_Hugo_norm_count"
+samples = c("TCGA-02-0047-01","TCGA-02-0055-01","TCGA-02-2483-01","TCGA-02-2485-01")
+probes =c("TP53", "RB1", "PIK3CA")
+
+.p_dataset_probe_values(hub, dataset, samples, probes)
+```
+
+## Find out the samples in a dataset
+
+```{r}
+hub = "https://tcga.xenahubs.net"
+dataset = "TCGA.BLCA.sampleMap/HiSeqV2"
+.p_dataset_samples(hub, dataset, 10)
+# obtain all samples
+.p_dataset_samples(hub, dataset, NULL) %>% head()
+```
+
+Higher API function `samples()` has more features. It can be used to do set operation for samples in a host.
+
+```{r, eval=FALSE}
+xe = XenaHub(cohorts = "Cancer Cell Line Encyclopedia (CCLE)")
+# samples in each dataset, first host
+x = samples(xe, by="datasets", how="each")[[1]]
+lengths(x)        # data sets in ccle cohort on first (only) host
+```
+
+## Find out the identifiers in a dataset
+
+```{r}
+hub = "https://tcga.xenahubs.net"
+dataset = "TCGA.BLCA.sampleMap/HiSeqV2"
+.p_dataset_field(hub, dataset) %>% head()
+```
+
+## Find out the number of identifiers in a dataset
+
+```{r}
+hub = "https://tcga.xenahubs.net"
+dataset = "TCGA.BLCA.sampleMap/HiSeqV2"
+.p_dataset_field_n(hub, dataset)
+```
+
+
+# LICENSE
+
+GPL-3
+
+Please note, code from **XenaR** package under Apache 2.0 license.
