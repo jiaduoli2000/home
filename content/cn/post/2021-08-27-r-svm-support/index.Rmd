@@ -1,0 +1,204 @@
+---
+title: R语言—支持向量机（SVM）
+author: 阿狸的Blog
+date: '2021-08-27'
+slug: r-svm-support
+categories:
+  - r
+tags:
+  - svm
+---
+今天，第一次尝试用R Markdown来写学习笔记，这是一个边学边记录的过程，今天的内容是支持向量机（Support Vector Machines），简称SVM。
+
+## 数据集介绍
+今天用到的还是R包自带的"iris"数据集，下面我们导入数据：
+
+```{r}
+data("iris")
+```
+查看前六行：
+```{r}
+str(iris)
+```
+数据集可视化：调用qplot函数绘制散点图，其中Petal.Length为x轴，Petal.Width为y轴：
+```{r}
+library(ggplot2)
+
+```
+```{r}
+qplot(Petal.Length,Petal.Width,data = iris,
+      color=Species)
+```
+
+![20210827234155](https://gitee.com/alingyisheng/tupian/raw/master/img/20210827234155.png)
+
+## 支持向量机 
+SVM用于分析用于分类和回归分析的数据。它主要用于分类问题。在该算法中，每个数据项被绘制为n维空间中的一个点(其中n是特征的数量)，每个特征的值是特定坐标的值。然后，通过寻找最能区分这两类的超平面来执行分类。
+
+![20210827210511](https://gitee.com/alingyisheng/tupian/raw/master/img/20210827210511.png){width=100%}
+
+除了执行线性分类之外，SVM可以有效地执行非线性分类。
+
+![20210827211244](https://gitee.com/alingyisheng/tupian/raw/master/img/20210827211244.png)
+
+在SVM的众多packages中，台湾⼤学林智仁⽼师开发的LIBSVM最常用，也就是下面要用到的"e1071"包。
+
+```{r}
+library(e1071)
+```
+
+### 用svm函数来建立模型：
+```{r}
+mymodel <- svm(Species~.,data=iris)
+summary(mymodel)
+```
+分析数据可以看出:
+
+SVM-分类机：C-classification。共五种：C-classification，nu-classification，one-classification(for novelty detection) ，eps-regression， nu-regression。
+
+SVM-核函数:radial。共四类：线性核函数（linear）、多项式核函数（polynomial）、径向基核函数（radial basis,RBF）和神经网络核函数（sigmoid）。
+
+cost:1。C分类中惩罚项c的取值。
+
+支持向量的数量是51。
+
+
+
+### 模型可视化：
+```{r}
+plot(mymodel,data = iris,
+     Petal.Width~Petal.Length,
+     slice = list(Sepal.Width = 3, Sepal.Length = 4))
+```
+
+![20210827234727](https://gitee.com/alingyisheng/tupian/raw/master/img/20210827234727.png)
+
+因为整个数据集有4个变量，这里我门把Sepal.Width = 3, Sepal.Length = 4，即设定为固定值。
+
+每种颜色代表一个物种的类别（setosa/versicolor/virginica）。其中8个属于setosa。浅黄色图中共有8个"×"
+
+## 混淆矩阵
+我们将使用创建的模型来预测每个物种。
+```{r}
+pred <- predict(mymodel,iris)
+tab <- table(Predicted = pred,Actual = iris$Species)
+tab
+```
+
+从表中可以看出，有50个点属于物种`setosa`,48个属于`versicolor`,这里有2个被预测成了`virginica`。我们来计算一下总的错误率。
+
+```{r}
+1-sum(diag(tab))/sum(tab)
+```
+约为2.7％，改模型使用径向基核函数（radial）为核心。下面我们来尝试应用其他核函数：线性核函数（linear）、多项式核函数（polynomial）和神经网络核函数（sigmoid）。
+
+
+
+- 线性核函数（linear）错误率：
+```{r}
+mymodel <- svm(Species~.,data=iris,kernel = "linear")
+summary(mymodel)
+plot(mymodel,data = iris,
+     Petal.Width~Petal.Length,
+     slice = list(Sepal.Width = 3, Sepal.Length = 4))
+pred <- predict(mymodel,iris)
+tab <- table(Predicted = pred,Actual = iris$Species)
+tab
+1-sum(diag(tab))/sum(tab)
+```
+
+![20210827234824](https://gitee.com/alingyisheng/tupian/raw/master/img/20210827234824.png)
+
+这里错误率是3.3％，较`radial`增加。 
+
+- 多项式核函数（polynomial）及错误率：
+```{r}
+mymodel <- svm(Species~.,data=iris,kernel = "polynomial")
+summary(mymodel)
+plot(mymodel,data = iris,
+     Petal.Width~Petal.Length,
+     slice = list(Sepal.Width = 3, Sepal.Length = 4))
+pred <- predict(mymodel,iris)
+tab <- table(Predicted = pred,Actual = iris$Species)
+tab
+1-sum(diag(tab))/sum(tab)
+```
+![20210827234914](https://gitee.com/alingyisheng/tupian/raw/master/img/20210827234914.png)
+这里错误率是4.7％，较`radial`增加。
+
+- 神经网络核函数（sigmoid）及错误率：
+```{r}
+mymodel <- svm(Species~.,data=iris,kernel = "sigmoid")
+summary(mymodel)
+plot(mymodel,data = iris,
+     Petal.Width~Petal.Length,
+     slice = list(Sepal.Width = 3, Sepal.Length = 4))
+pred <- predict(mymodel,iris)
+tab <- table(Predicted = pred,Actual = iris$Species)
+tab
+1-sum(diag(tab))/sum(tab)
+```
+![20210827234939](https://gitee.com/alingyisheng/tupian/raw/master/img/20210827234939.png)
+这里错误率是11.3％，较`radial`增加。在所有核函数中性能最差。
+
+## 模型的调整（超参数优化）
+这里我们使用tune()函数来及逆行调整。
+```{r}
+set.seed(124)
+tmodel <- tune(svm,Species~.,data = iris,
+               ranges = list(epsilon = seq(0,1,0.1,),
+               cost = 2^(2:9)))
+```
+
+这里使用从0开始，并以0.1递增的序列。即我们将有11个不同的值：
+epsilon：0，0.1，0.2，0.3，0.4，0.5，0.6，0.7，0.8，0.9，1.0。
+
+另一个需要微调的参数是`cost`。这个值太大会导致过拟合。太小会导致拟合不足。所以使用较大的范围，以便能够获得最佳。即我们将有8个不同的值：
+cost：2^2,2^3,2^4,2^5,2^6,2^7,2^8,2^9。
+
+这样就会得到：11×8种组合。组合越多，可能需要的时间就越长。
+
+绘制tmodel：
+```{r}
+plot(tmodel)
+```
+![20210827235015](https://gitee.com/alingyisheng/tupian/raw/master/img/20210827235015.png)
+参数对应较暗的区域意味着更好的结果在这些区域。根据图示我们可以缩小一下`cost`的范围：
+```{r}
+set.seed(124)
+tmodel <- tune(svm,Species~.,data = iris,
+               ranges = list(epsilon = seq(0,1,0.1,),
+               cost = 2^(2:7)))
+plot(tmodel)
+```
+![20210827235052](https://gitee.com/alingyisheng/tupian/raw/master/img/20210827235052.png)
+我们来看看tmodel的摘要：
+```{r}
+summary(tmodel)
+```
+这里的方法是10倍交叉验证：10-fold cross validation 。
+最佳表现是：0.03333333。 
+
+## 最佳模型
+```{r}
+mymodel <- tmodel$best.model
+summary(mymodel)
+```
+可以看到最佳模型的各种参数。
+
+### 模型可视化：
+```{r}
+plot(mymodel,data = iris,
+     Petal.Width~Petal.Length,
+     slice = list(Sepal.Width = 3, Sepal.Length = 4))
+```
+![20210827235136](https://gitee.com/alingyisheng/tupian/raw/master/img/20210827235136.png)
+
+### 最佳模型的混淆矩阵及分类错误
+```{r}
+pred <- predict(mymodel,iris)
+tab <- table(Predicted = pred,Actual = iris$Species)
+tab
+1-sum(diag(tab))/sum(tab)
+```
+这里错误率是1.3％，真的是`最佳`。150个点只有2个被错误分类。比之前的要少的多。
